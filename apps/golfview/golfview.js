@@ -1,65 +1,13 @@
-// maptools.js
-const EARTHRADIUS = 6371000; //km
+const Storage = require('Storage');
+const Layout = require('Layout');
+const MapTools = require('maptools');
 
-function radians(a) {
-  return a * Math.PI / 180;
-}
+const courselist = Storage.list(/^golf-\d+\.json$/);
+const course = Storage.readJSON(courselist[0]).holes;
 
-function degrees(a) {
-  let d = a * 180 / Math.PI;
-  return (d + 360) % 360;
-}
-
-function toXY(a, origin) {
-  let pt = {
-    x: 0,
-    y: 0
-  };
-
-  pt.x = EARTHRADIUS * radians(a.lon - origin.lon) * Math.cos(radians((a.lat + origin.lat) / 2));
-  pt.y = EARTHRADIUS * radians(origin.lat - a.lat);
-  return pt;
-}
-
-function arraytoXY(array, origin) {
-  let out = [];
-  for (var j in array) {
-    let newpt = toXY(array[j], origin);
-    out.push(newpt);
-  }
-  return out;
-}
-
-function angle(a, b) {
-  let x = b.x - a.x;
-  let y = b.y - a.y;
-  return Math.atan2(-y, x);
-}
-
-function rotateVec(a, theta) {
-  let pt = {
-    x: 0,
-    y: 0
-  };
-  c = Math.cos(theta);
-  s = Math.sin(theta);
-  pt.x = c * a.x - s * a.y;
-  pt.y = s * a.x + c * a.y;
-  return pt;
-}
-
-function distance(a, b) {
-  return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
-}
-
-
-// golfview.js
-let courselist = require("Storage").list(/^golf-\d+\.json$/);
-let course = require("Storage").readJSON(courselist[0]).holes; // TODO use the first course for now
-
-let current_hole = 1;
-let hole = course[current_hole.toString()];
-let user_position = {
+let currentHole = 1;
+let hole = course[currentHole.toString()];
+const userPosition = {
   fix: false,
   lat: 0,
   lon: 0,
@@ -71,70 +19,73 @@ let user_position = {
 };
 
 function drawUser() {
-  if(!user_position.fix) return;
-  let new_pos = g.transformVertices([user_position.x,user_position.y],user_position.transform);
+  if (!userPosition.fix) return;
+  const newPos = g.transformVertices([userPosition.x, userPosition.y], userPosition.transform);
   g.setColor(g.theme.fg);
-  g.drawCircle(new_pos[0],new_pos[1],8);
+  g.drawCircle(newPos[0], newPos[1], 8);
 }
 
 function drawHole(l) {
+  let newnodelist = [];
+  let nodelist = [];
 
-  //console.log(l);
-  let hole_straight_distance = distance(
+  // console.log(l);
+  const holeStraightDistance = MapTools.distance(
     hole.nodesXY[0],
-    hole.nodesXY[hole.nodesXY.length - 1]
+    hole.nodesXY[hole.nodesXY.length - 1],
   );
 
-  let scale = 0.9 * l.h / hole_straight_distance;
+  const scale = (0.9 * l.h) / holeStraightDistance;
 
-  let transform = {
+  const transform = {
     x: l.x + l.w / 2, // center in the box
     y: l.h * 0.95, // pad it just a bit TODO use the extent of the teeboxes/green
-    scale: scale, // scale factor (default 1)
+    scale, // scale factor (default 1)
     rotate: hole.angle - Math.PI / 2.0, // angle in radians (default 0)
   };
 
-  user_position.transform = transform;
+  userPosition.transform = transform;
 
   // draw the fairways first
-  hole.features.sort((a, b) => {
-    if (a.type === "fairway") {
+  hole.features.sort((a) => {
+    if (a.type === 'fairway') {
       return -1;
     }
+    return 0;
   });
 
-  for (var feature of hole.features) {
-    //console.log(Object.keys(feature));
-    if (feature.type === "fairway") {
+  hole.features.forEach((feature) => {
+    // console.log(Object.keys(feature));
+    if (feature.type === 'fairway') {
       g.setColor(1, 0, 1); // magenta
-    } else if (feature.type === "tee") {
+    } else if (feature.type === 'tee') {
       g.setColor(1, 0, 0); // red
-    } else if (feature.type === "green") {
+    } else if (feature.type === 'green') {
       g.setColor(0, 1, 0); // green
-    } else if (feature.type === "bunker") {
+    } else if (feature.type === 'bunker') {
       g.setColor(1, 1, 0); // yellow
-    } else if (feature.type === "water_hazard") {
+    } else if (feature.type === 'water_hazard') {
       g.setColor(0, 0, 1); // blue
     } else {
-      continue;
+      return;
     }
 
-    var nodelist = [];
-    feature.nodesXY.forEach(function (node) {
+    nodelist = [];
+    feature.nodesXY.forEach((node) => {
       nodelist.push(node.x);
       nodelist.push(node.y);
     });
     newnodelist = g.transformVertices(nodelist, transform);
 
     g.fillPoly(newnodelist, true);
-    //console.log(feature.type);
-    //console.log(newnodelist);
+    // console.log(feature.type);
+    // console.log(newnodelist);
 
     drawUser();
-  }
+  });
 
-  var waynodelist = [];
-  hole.nodesXY.forEach(function (node) {
+  const waynodelist = [];
+  hole.nodesXY.forEach((node) => {
     waynodelist.push(node.x);
     waynodelist.push(node.y);
   });
@@ -143,72 +94,85 @@ function drawHole(l) {
   g.setColor(0, 1, 1); // cyan
   g.drawPoly(newnodelist);
 }
+const layout = new Layout({
+  type: 'h',
+  c: [
+    {
+      type: 'v',
+      c: [
+        {
+          type: 'txt', font: '10%', id: 'hole', label: 'HOLE 18',
+        },
+        {
+          type: 'txt', font: '10%', id: 'par', label: 'PAR 4',
+        },
+        {
+          type: 'txt', font: '10%', id: 'hcp', label: 'HCP 18',
+        },
+        {
+          type: 'txt', font: '35%', id: 'postyardage', label: '---',
+        },
+        {
+          type: 'txt', font: '20%', id: 'measyardage', label: '---',
+        },
+      ],
+    },
+    {
+      type: 'custom', render: drawHole, id: 'graph', bgCol: g.theme.bg, fillx: 1, filly: 1,
+    },
+  ],
+  lazy: true,
+});
 
-function setHole(current_hole) {
-  layout.hole.label = "HOLE " + current_hole;
-  layout.par.label = "PAR " + course[current_hole.toString()].par;
-  layout.hcp.label = "HCP " + course[current_hole.toString()].handicap;
-  layout.postyardage.label = course[current_hole.toString()].tees[course[current_hole.toString()].tees.length - 1]; //TODO only use longest hole for now
+function setHole(newHole) {
+  layout.hole.label = `HOLE ${newHole}`;
+  layout.par.label = `PAR ${course[newHole.toString()].par}`;
+  layout.hcp.label = `HCP ${course[newHole.toString()].handicap}`;
+  layout.postyardage.label = course[newHole.toString()]
+    .tees[course[newHole.toString()].tees.length - 1];
 
   g.clear();
   layout.render();
 }
 
 function updateDistanceToHole() {
-  let xy = toXY({ "lat": user_position.lat, "lon": user_position.lon }, hole.way[0]);
-  user_position.x = xy.x;
-  user_position.y = xy.y;
-  user_position.last_time = getTime();
-  let new_distance = Math.round(distance(xy, hole.nodesXY[hole.nodesXY.length - 1]) * 1.093613); //TODO meters later
-  //console.log(new_distance);
-  layout.measyardage.label = (new_distance < 999) ? new_distance : "---";
+  const xy = MapTools.toXY({ lat: userPosition.lat, lon: userPosition.lon }, hole.way[0]);
+  userPosition.x = xy.x;
+  userPosition.y = xy.y;
+  userPosition.last_time = getTime();
+  let newDistance = MapTools.distance(xy, hole.nodesXY[hole.nodesXY.length - 1]);
+  newDistance = Math.round(newDistance * 1.093613); // yards
+  // console.log(newDistance);
+  layout.measyardage.label = (newDistance < 999) ? newDistance : '---';
 
   g.clear();
   layout.render();
 }
 
-Bangle.on('swipe', function (direction) {
+Bangle.on('swipe', (direction) => {
   if (direction > 0) {
-    current_hole--;
+    currentHole -= 1;
   } else {
-    current_hole++;
+    currentHole += 1;
   }
 
-  if (current_hole > 18) { current_hole = 1; }
-  if (current_hole < 1) { current_hole = 18; }
-  hole = course[current_hole.toString()];
+  if (currentHole > 18) { currentHole = 1; }
+  if (currentHole < 1) { currentHole = 18; }
+  hole = course[currentHole.toString()];
 
-  setHole(current_hole);
+  setHole(currentHole);
 });
 
 Bangle.on('GPS', (fix) => {
-  if (isNaN(fix.lat)) return;
-  //console.log(fix.hdop * 5); //precision
-  user_position.fix = true;
-  user_position.lat = fix.lat;
-  user_position.lon = fix.lon;
+  if (Number.isNaN(fix.lat)) return;
+  // console.log(fix.hdop * 5); //precision
+  userPosition.fix = true;
+  userPosition.lat = fix.lat;
+  userPosition.lon = fix.lon;
   updateDistanceToHole();
   drawUser();
 });
 
-// The layout, referencing the custom renderer
-var Layout = require("Layout");
-var layout = new Layout({
-  type: "h", c: [
-    {
-      type: "v", c: [
-        { type: "txt", font: "10%", id: "hole", label: "HOLE 18" },
-        { type: "txt", font: "10%", id: "par", label: "PAR 4" },
-        { type: "txt", font: "10%", id: "hcp", label: "HCP 18" },
-        { type: "txt", font: "35%", id: "postyardage", label: "---" },
-        { type: "txt", font: "20%", id: "measyardage", label: "---" },
-      ]
-    },
-    { type: "custom", render: drawHole, id: "graph", bgCol: g.theme.bg, fillx: 1, filly: 1 }
-  ],
-  lazy: true
-});
-
 Bangle.setGPSPower(1);
-setHole(current_hole);
-//layout.debug();
+setHole(currentHole);
+// layout.debug();
