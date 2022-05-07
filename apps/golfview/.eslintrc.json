@@ -7,5 +7,6 @@
     "extends": "airbnb-base",
     "rules": {
         "import/no-unresolved": "off"
-    }
+    },
+    "ignorePatterns": "golfview-icon.js"
 }
