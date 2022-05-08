@@ -63,11 +63,6 @@ golfviewTools.downloadObjectAsJSON = function downloadObjectAsJSON(exportObj, ex
   downloadAnchorNode.remove();
 };
 
-console.log('here');
-console.log(typeof exports);
-console.log(typeof module);
-console.log(typeof define);
-// console.log(define.amd);
-// console.log(global);
-
-console.log('enddebug');
+if (typeof exports === 'object') {
+  exports.golfviewTools = golfviewTools;
+}
