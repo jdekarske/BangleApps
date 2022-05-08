@@ -1,8 +1,3 @@
-const $ = require('jquery');
-const simplify = require('simplify');
-const MapTools = require('maptools');
-const customize = require('../../core/lib/customize');
-
 const url = 'https://overpass-api.de/api/interpreter';
 const searchURL = 'https://nominatim.openstreetmap.org/search';
 let searchQuery = null;
@@ -10,7 +5,7 @@ const searchResults = $('#searchresults');
 const courses = [];
 
 function preprocessCoords(coordArray, origin) {
-  const manyPoints = MapTools.arraytoXY(coordArray, origin);
+  const manyPoints = mapTools.arraytoXY(coordArray, origin);
   let lessPoints = simplify(manyPoints, 2, true); // from simplify-js
 
   // convert to int to save some memory
@@ -46,7 +41,7 @@ function processFeatures(courseVerbose) {
       };
 
       // TODO rotate hole here
-      hole.angle = MapTools.angle(hole.nodesXY[0], hole.nodesXY[hole.nodesXY.length - 1]);
+      hole.angle = mapTools.angle(hole.nodesXY[0], hole.nodesXY[hole.nodesXY.length - 1]);
       courseProcessed.holes[currentHole.toString()] = hole;
     } else {
       if (!('ref' in element.tags)) return;
@@ -149,13 +144,13 @@ function courseSearch() {
 }
 
 $('#upload').on('click', () => {
-  customize.sendCustomizedApp({
+  sendCustomizedApp({
     storage: courses,
   });
 });
 
 $('#download').on('click', () => {
-  MapTools.downloadObjectAsJSON(courses[0].content, 'golfcourse-download');
+  mapTools.downloadObjectAsJSON(courses[0].content, 'golfcourse-download');
 });
 
 $('#searchButton').on('click', courseSearch);
