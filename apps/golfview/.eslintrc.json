@@ -8,5 +8,11 @@
     "rules": {
         "import/no-unresolved": "off"
     },
+    "globals": {
+        "$": "readonly",
+        "mapTools": "readonly",
+        "sendCustomizedApp": "readonly",
+        "simplify": "readonly"
+    },
     "ignorePatterns": "golfview-icon.js"
 }
