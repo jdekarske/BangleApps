@@ -164,7 +164,8 @@ Bangle.on('swipe', (direction) => {
 });
 
 Bangle.on('GPS', (fix) => {
-  if (Number.isNaN(fix.lat)) return;
+  // eslint-disable-next-line no-restricted-globals
+  if (isNaN(fix.lat)) return;
   // console.log(fix.hdop * 5); //precision
   userPosition.fix = true;
   userPosition.lat = fix.lat;
