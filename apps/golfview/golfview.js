@@ -30,17 +30,15 @@ function drawHole(l) {
   let nodelist = [];
 
   // console.log(l);
-  const holeStraightDistance = golfviewTools.distance(
-    hole.nodesXY[0],
-    hole.nodesXY[hole.nodesXY.length - 1],
-  );
+  // eslint-disable-next-line max-len
+  const holeStraightDistance = golfviewTools.distance(hole.nodesXY[0], hole.nodesXY[hole.nodesXY.length - 1]);
 
-  const scale = (0.9 * l.h) / holeStraightDistance;
+  const holeScale = (0.9 * l.h) / holeStraightDistance;
 
   const transform = {
     x: l.x + l.w / 2, // center in the box
     y: l.h * 0.95, // pad it just a bit TODO use the extent of the teeboxes/green
-    scale, // scale factor (default 1)
+    scale: holeScale,
     rotate: hole.angle - Math.PI / 2.0, // angle in radians (default 0)
   };
 
