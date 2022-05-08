@@ -49,7 +49,7 @@ function drawHole(l) {
     if (a.type === 'fairway') {
       return -1;
     }
-    return 0;
+    return 1;
   });
 
   hole.features.forEach((feature) => {
@@ -78,8 +78,6 @@ function drawHole(l) {
     g.fillPoly(newnodelist, true);
     // console.log(feature.type);
     // console.log(newnodelist);
-
-    drawUser();
   });
 
   const waynodelist = [];
@@ -116,7 +114,10 @@ const layout = new Layout({
       ],
     },
     {
-      type: 'custom', render: drawHole, id: 'graph', bgCol: g.theme.bg, fillx: 1, filly: 1,
+      type: 'custom', render: drawHole, id: 'holeImage', bgCol: g.theme.bg, fillx: 1, filly: 1,
+    },
+    {
+      type: 'custom', render: drawUser, id: 'user',
     },
   ],
   lazy: true,
@@ -169,7 +170,9 @@ Bangle.on('GPS', (fix) => {
   userPosition.lat = fix.lat;
   userPosition.lon = fix.lon;
   updateDistanceToHole();
-  drawUser();
+
+  g.clear();
+  layout.render();
 });
 
 Bangle.setGPSPower(1);
