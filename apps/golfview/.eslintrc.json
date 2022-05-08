@@ -10,7 +10,7 @@
     },
     "globals": {
         "$": "readonly",
-        "mapTools": "readonly",
+        "golfviewTools": "readonly",
         "sendCustomizedApp": "readonly",
         "simplify": "readonly"
     },

@@ -5,7 +5,7 @@ const searchResults = $('#searchresults');
 const courses = [];
 
 function preprocessCoords(coordArray, origin) {
-  const manyPoints = mapTools.arraytoXY(coordArray, origin);
+  const manyPoints = golfviewTools.arraytoXY(coordArray, origin);
   let lessPoints = simplify(manyPoints, 2, true); // from simplify-js
 
   // convert to int to save some memory
@@ -41,7 +41,7 @@ function processFeatures(courseVerbose) {
       };
 
       // TODO rotate hole here
-      hole.angle = mapTools.angle(hole.nodesXY[0], hole.nodesXY[hole.nodesXY.length - 1]);
+      hole.angle = golfviewTools.angle(hole.nodesXY[0], hole.nodesXY[hole.nodesXY.length - 1]);
       courseProcessed.holes[currentHole.toString()] = hole;
     } else {
       if (!('ref' in element.tags)) return;
@@ -150,7 +150,7 @@ $('#upload').on('click', () => {
 });
 
 $('#download').on('click', () => {
-  mapTools.downloadObjectAsJSON(courses[0].content, 'golfcourse-download');
+  golfviewTools.downloadObjectAsJSON(courses[0].content, 'golfcourse-download');
 });
 
 $('#searchButton').on('click', courseSearch);

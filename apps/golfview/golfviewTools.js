@@ -1,15 +1,15 @@
-const mapTools = {};
+const golfviewTools = {};
 
-mapTools.radians = function radians(a) {
+golfviewTools.radians = function radians(a) {
   return (a * Math.PI) / 180;
 };
 
-mapTools.degrees = function degrees(a) {
+golfviewTools.degrees = function degrees(a) {
   const d = (a * 180) / Math.PI;
   return (d + 360) % 360;
 };
 
-mapTools.toXY = function toXY(a, origin) {
+golfviewTools.toXY = function toXY(a, origin) {
   const pt = {
     x: 0,
     y: 0,
@@ -21,7 +21,7 @@ mapTools.toXY = function toXY(a, origin) {
   return pt;
 };
 
-mapTools.arraytoXY = function arraytoXY(array, origin) {
+golfviewTools.arraytoXY = function arraytoXY(array, origin) {
   const out = [];
   array.forEach((pt) => {
     const newpt = this.toXY(pt, origin);
@@ -30,13 +30,13 @@ mapTools.arraytoXY = function arraytoXY(array, origin) {
   return out;
 };
 
-mapTools.angle = function angle(a, b) {
+golfviewTools.angle = function angle(a, b) {
   const x = b.x - a.x;
   const y = b.y - a.y;
   return Math.atan2(-y, x);
 };
 
-mapTools.rotateVec = function rotateVec(a, theta) {
+golfviewTools.rotateVec = function rotateVec(a, theta) {
   const pt = {
     x: 0,
     y: 0,
@@ -48,12 +48,12 @@ mapTools.rotateVec = function rotateVec(a, theta) {
   return pt;
 };
 
-mapTools.distance = function distance(a, b) {
+golfviewTools.distance = function distance(a, b) {
   return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
 };
 
 // https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser
-mapTools.downloadObjectAsJSON = function downloadObjectAsJSON(exportObj, exportName) {
+golfviewTools.downloadObjectAsJSON = function downloadObjectAsJSON(exportObj, exportName) {
   const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(exportObj)}`; // must be stringified!!
   const downloadAnchorNode = document.createElement('a');
   downloadAnchorNode.setAttribute('href', dataStr);

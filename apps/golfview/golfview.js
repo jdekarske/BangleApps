@@ -1,6 +1,6 @@
 const Storage = require('Storage');
 const Layout = require('Layout');
-const MapTools = require('maptools');
+const golfviewTools = require('golfviewTools');
 
 const courselist = Storage.list(/^golf-\d+\.json$/);
 const course = Storage.readJSON(courselist[0]).holes;
@@ -30,7 +30,7 @@ function drawHole(l) {
   let nodelist = [];
 
   // console.log(l);
-  const holeStraightDistance = MapTools.distance(
+  const holeStraightDistance = golfviewTools.distance(
     hole.nodesXY[0],
     hole.nodesXY[hole.nodesXY.length - 1],
   );
@@ -136,11 +136,11 @@ function setHole(newHole) {
 }
 
 function updateDistanceToHole() {
-  const xy = MapTools.toXY({ lat: userPosition.lat, lon: userPosition.lon }, hole.way[0]);
+  const xy = golfviewTools.toXY({ lat: userPosition.lat, lon: userPosition.lon }, hole.way[0]);
   userPosition.x = xy.x;
   userPosition.y = xy.y;
   userPosition.last_time = getTime();
-  let newDistance = MapTools.distance(xy, hole.nodesXY[hole.nodesXY.length - 1]);
+  let newDistance = golfviewTools.distance(xy, hole.nodesXY[hole.nodesXY.length - 1]);
   newDistance = Math.round(newDistance * 1.093613); // yards
   // console.log(newDistance);
   layout.measyardage.label = (newDistance < 999) ? newDistance : '---';
