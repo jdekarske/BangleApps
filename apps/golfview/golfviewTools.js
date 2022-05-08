@@ -64,5 +64,5 @@ golfviewTools.downloadObjectAsJSON = function downloadObjectAsJSON(exportObj, ex
 };
 
 if (typeof exports === 'object') {
-  exports.golfviewTools = golfviewTools;
+  exports = golfviewTools;
 }
