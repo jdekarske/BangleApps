@@ -49,7 +49,8 @@ golfviewTools.rotateVec = function rotateVec(a, theta) {
 };
 
 golfviewTools.distance = function distance(a, b) {
-  return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+  // eslint-disable-next-line no-restricted-properties
+  return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 };
 
 // https://stackoverflow.com/questions/19721439/download-json-object-as-a-file-from-browser

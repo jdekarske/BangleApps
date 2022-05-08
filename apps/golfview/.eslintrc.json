@@ -1,12 +1,12 @@
 {
     "env": {
         "browser": true,
-        "commonjs": true,
-        "es6": true
+        "commonjs": true
     },
     "extends": "airbnb-base",
     "rules": {
-        "import/no-unresolved": "off"
+        "import/no-unresolved": "off",
+        "prefer-exponentiation-operator": "off"
     },
     "globals": {
         "$": "readonly",
