@@ -69,7 +69,7 @@ function processFeatures(courseVerbose) {
 
 // download info from the course
 function doQuery(course) {
-  const query = `[out:json][timeout:5];way(${course.osm_id});map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
+  const query = `[out:json][timeout:5];${course.osm_type}(${course.osm_id});map_to_area ->.golfcourse;way["golf"="hole"](area.golfcourse)->.holes;(relation["golf"="fairway"](area.golfcourse);way["golf"~"^(green|tee|water_hazard|bunker|fairway)"](area.golfcourse);)->.features;.holes out geom;.features out geom;`;
   const courseID = course.osm_id;
   $.post(url, query, (result) => {
     if (result.elements.length === 0) {
