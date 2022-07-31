@@ -4,7 +4,7 @@ const golfviewTools = require('golfviewTools');
 
 const courselist = Storage.list(/^golf-\d+\.json$/);
 const course = Storage.readJSON(courselist[0]).holes;
-const numHoles = course.length;
+const numHoles = Object.keys(course).length;
 
 let currentHole = 1;
 let hole = course[currentHole.toString()];
