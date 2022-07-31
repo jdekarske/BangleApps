@@ -4,6 +4,7 @@ const golfviewTools = require('golfviewTools');
 
 const courselist = Storage.list(/^golf-\d+\.json$/);
 const course = Storage.readJSON(courselist[0]).holes;
+const numHoles = course.length;
 
 let currentHole = 1;
 let hole = course[currentHole.toString()];
@@ -155,8 +156,8 @@ Bangle.on('swipe', (direction) => {
     currentHole += 1;
   }
 
-  if (currentHole > 18) { currentHole = 1; }
-  if (currentHole < 1) { currentHole = 18; }
+  if (currentHole > numHoles) { currentHole = 1; }
+  if (currentHole < 1) { currentHole = numHoles; }
   hole = course[currentHole.toString()];
 
   setHole(currentHole);
