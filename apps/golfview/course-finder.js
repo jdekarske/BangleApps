@@ -5,11 +5,15 @@ const searchResults = $('#searchresults');
 const courses = [];
 
 function preprocessCoords(coordArray, origin) {
-  const manyPoints = golfviewTools.arraytoXY(coordArray, origin);
-  let lessPoints = simplify(manyPoints, 2, true); // from simplify-js
+  let somePoints = golfviewTools.arraytoXY(coordArray, origin);
+  let tolerance = 0.0;
+    while (somePoints.length > 75){
+        let somePoints = simplify(manyPoints, tolerance, true); // from simplify-js
+        tolerance += 0.1
+    }
 
   // convert to int to save some memory
-  lessPoints = lessPoints.map((pt) => ({ x: Math.round(pt.x), y: Math.round(pt.y) }));
+  lessPoints = somePoints.map((pt) => ({ x:pt.x.toFixed(1), y: pt.y.toFixed(1) }));
 
   return lessPoints;
 }
